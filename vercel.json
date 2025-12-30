@@ -20,5 +20,5 @@
       "destination": "/index.html"
     }
   ],
-  "regions": ["hkg1"]  // 使用香港区域，国内访问更快
+  "regions": ["hkg1"]
 }
