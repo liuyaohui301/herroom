@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>To Zoey</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Sacramento&family=Parisienne&family=Great+Vibes&family=Qwitcher+Grypen:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* 移动端基础设置 */
+        * {
+            -webkit-tap-highlight-color: transparent;
+            -webkit-text-size-adjust: none;
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            position: fixed; /* 防止滚动 */
+        }
+        
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: -webkit-fill-available; /* 支持iPhone全面屏 */
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            font-family: 'Dancing Script', cursive;
+            color: white;
+            text-align: center;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) 
+                     env(safe-area-inset-bottom) env(safe-area-inset-left);
+            touch-action: manipulation;
+        }
+        
+        #heart-container {
+            position: relative;
+            width: 250px;
+            height: 250px;
+            margin: 10px auto 20px;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* iPhone 15 尺寸适配 */
+        @media only screen and (max-width: 430px) {
+            #heart-container {
+                width: 220px;
+                height: 220px;
+                margin: 5px auto 15px;
+            }
+            
+            .main-title {
+                font-size: 2.8em !important;
+                margin: 5px 0 !important;
+                padding: 0 15px !important;
+            }
+            
+            .new-year-title {
+                font-size: 2em !important;
+                margin: 10px 0 !important;
+                padding: 0 15px !important;
+            }
+            
+            .greeting-card {
+                width: 90vw !important;
+                height: auto !important;
+                min-height: 65vh;
+                padding: 25px 20px !important;
+                max-height: 85vh;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .card-title {
+                font-size: 2.8em !important;
+                margin-bottom: 15px !important;
+            }
+            
+            .card-signature {
+                font-size: 1.8em !important;
+                line-height: 1.3 !important;
+            }
+            
+            .close-card {
+                width: 35px !important;
+                height: 35px !important;
+                font-size: 20px !important;
+                top: 15px !important;
+                right: 15px !important;
+            }
+        }
+        
+        /* 横屏适配 */
+        @media only screen and (max-height: 600px) and (orientation: landscape) {
+            body {
+                flex-direction: row;
+                justify-content: space-around;
+                padding: 10px;
+            }
+            
+            #heart-container {
+                width: 200px;
+                height: 200px;
+                margin: 0;
+            }
+            
+            .greeting-container {
+                margin: 0;
+                max-width: 50%;
+            }
+            
+            .main-title {
+                font-size: 2.5em !important;
+            }
+            
+            .new-year-title {
+                font-size: 2.2em !important;
+            }
+        }
+        
+        .heart-particle {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #ff4d6d, #ff758f);
+            pointer-events: none;
+            box-shadow: 0 0 8px #ff4d6d;
+            transition: all 0.3s ease;
+        }
+        
+        .greeting-container {
+            margin: 10px 0 20px;
+            width: 100%;
+            max-width: 600px;
+            padding: 0 15px;
+        }
+        
+        .main-title {
+            font-family: 'Great Vibes', cursive;
+            font-size: clamp(2.2em, 7vw, 3.5em);
+            color: #ffd6d6;
+            text-shadow: 0 0 20px rgba(255, 77, 109, 0.9);
+            margin: 8px 0;
+            line-height: 1.2;
+            word-break: break-word;
+        }
+        
+        .new-year-title {
+            font-family: 'Great Vibes', cursive;
+            font-size: clamp(1em, 3.6vw, 2em);
+            color: #ffccd5;
+            text-shadow: 0 0 15px rgba(255, 140, 180, 0.8);
+            margin: 8px 0;
+            line-height: 1.2;
+        }
+        
+        .decoration {
+            font-size: clamp(1.2em, 4vw, 1.8em);
+            margin: 0 10px;
+            animation: sparkle 2s infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        
+        @keyframes sparkle {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.1); }
+        }
+        
+        /* 贺卡样式 - 移动端优化 */
+        .greeting-card {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            width: 85vw;
+            max-width: 500px;
+            height: auto;
+            min-height: 400px;
+            background: linear-gradient(135deg, rgba(255, 240, 245, 0.98), rgba(255, 228, 230, 0.98));
+            border-radius: 20px;
+            box-shadow: 0 0 60px rgba(255, 77, 109, 0.8),
+                        inset 0 0 30px rgba(255, 255, 255, 0.5);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 30px 25px;
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+                        opacity 0.6s ease;
+            opacity: 0;
+            border: 2px solid rgba(255, 77, 109, 0.3);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            overflow: hidden;
+        }
+        
+        .greeting-card.show {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+        
+        .card-content {
+            text-align: center;
+            padding: 20px 15px;
+            width: 100%;
+        }
+        
+        .card-title {
+            font-family: 'Great Vibes', cursive;
+            font-size: clamp(2.5em, 8vw, 3.5em);
+            color: #ff1493;
+            margin-bottom: 15px;
+            font-weight: 700;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .card-signature {
+            font-family: 'Great Vibes', cursive;
+            font-size: clamp(1.6em, 5vw, 2.2em);
+            color: #ff1493;
+	    font-weight: 700;
+            margin: 15px 0;
+        }
+        
+        .close-card {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #ff4d6d;
+            color: white;
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(255, 77, 109, 0.4);
+            z-index: 1001;
+            touch-action: manipulation;
+            min-width: 44px;
+            min-height: 44px;
+        }
+        
+        .card-decoration {
+            position: absolute;
+            font-size: 1.5em;
+            color: #ff4d6d;
+            opacity: 0.5;
+        }
+        
+        .card-decoration:nth-child(1) { top: 10px; left: 15px; }
+        .card-decoration:nth-child(2) { top: 10px; right: 15px; }
+        .card-decoration:nth-child(3) { bottom: 10px; left: 15px; }
+        .card-decoration:nth-child(4) { bottom: 10px; right: 15px; }
+        
+        /* 烟花效果 - 移动端优化 */
+        .firework {
+            position: absolute;
+            pointer-events: none;
+            z-index: 100;
+        }
+        
+        .firework-particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            border-radius: 50%;
+            animation: firework-explode 1s ease-out forwards;
+        }
+        
+        @keyframes firework-explode {
+            0% {
+                transform: translate(0, 0) scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--tx), var(--ty)) scale(1);
+                opacity: 0;
+            }
+        }
+        
+        .sparkle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: sparkleTwinkle 1.5s infinite;
+            opacity: 0;
+        }
+        
+        @keyframes sparkleTwinkle {
+            0%, 100% { opacity: 0; transform: scale(0); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+        
+        .heartbeat-line {
+            width: 50%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #ff4d6d, transparent);
+            margin: 15px auto;
+            animation: heartbeat-line 1.5s infinite;
+        }
+        
+        @keyframes heartbeat-line {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.5s ease;
+            touch-action: none;
+        }
+        
+        .overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* 移动端提示 */
+        .mobile-hint {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(1em, 3.5vw, 1.3em);
+            color: #ffccd5;
+            margin-top: 15px;
+            opacity: 0.8;
+            padding: 0 20px;
+            line-height: 1.3;
+        }
+        
+        /* 防止长按菜单 */
+        * {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        
+        /* 安全区域适配 */
+        .safe-area-top {
+            padding-top: env(safe-area-inset-top);
+        }
+        
+        .safe-area-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+    </style>
+</head>
+<body>
+    <div id="heart-container"></div>
+    
+    <div class="greeting-container">
+        <div class="main-title" style="animation: float 3s ease-in-out infinite;">Dearest Zoey</div>
+        <div class="heartbeat-line"></div>
+        <div class="new-year-title">
+            <span class="decoration">✨</span>
+            Happy New Year
+            <span class="decoration">✨</span>
+        </div>
+    </div>
+    
+    <!-- 遮罩层 -->
+    <div class="overlay" id="overlay"></div>
+    
+    <!-- 贺卡 -->
+    <div class="greeting-card" id="greetingCard">
+        <div class="card-decoration">❤️</div>
+        <div class="card-decoration">✨</div>
+        <div class="card-decoration">🎉</div>
+        <div class="card-decoration">💫</div>
+        
+        <div class="card-content">
+            <div class="card-title">To Zoey</div>
+            <div class="heartbeat-line" style="width: 70%;"></div>
+            <div class="card-signature">
+                May you have endless joy,<br> 
+                boundless love, and magical moments ✨
+            </div>
+	    <div class="heartbeat-line" style="width: 70%;"></div>
+            <div class="card-signature">
+                From Hui, Dec 31, 2025
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 移动端适配设置
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        const particleCount = isMobile ? 120 : 200; // 移动端减少粒子数量
+        let particles = [];
+        let isExpanding = true;
+        let scale = 1;
+        const maxScale = 1.8;
+        const minScale = 0.8;
+        
+        // 防止双击缩放
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function(event) {
+            const now = Date.now();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, { passive: false });
+        
+        // 爱心形状函数
+        function heartShape(angle, scale) {
+            const t = angle;
+            const x = 16 * Math.pow(Math.sin(t), 3);
+            const y = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
+            return { x: x * scale, y: y * scale };
+        }
+        
+        // 创建爱心粒子
+        function createHeartParticles() {
+            const container = document.getElementById('heart-container');
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'heart-particle';
+                
+                const hue = 340 + Math.random() * 20;
+                particle.style.background = `linear-gradient(45deg, 
+                    hsl(${hue}, 100%, 60%), 
+                    hsl(${hue + 20}, 100%, 70%))`;
+                
+                container.appendChild(particle);
+                
+                particles.push({
+                    element: particle,
+                    angle: (i / particleCount) * Math.PI * 2,
+                    offset: Math.random() * 0.2 - 0.1,
+                    speed: 0.02 + Math.random() * 0.02
+                });
+            }
+        }
+        
+        // 更新爱心粒子动画
+        function updateHeart() {
+            if (isExpanding) {
+                scale += 0.01;
+                if (scale >= maxScale) isExpanding = false;
+            } else {
+                scale -= 0.01;
+                if (scale <= minScale) isExpanding = true;
+            }
+            
+            particles.forEach(p => {
+                p.angle += p.speed;
+                const pos = heartShape(p.angle, scale + p.offset);
+                
+                const container = document.getElementById('heart-container');
+                const containerWidth = container.offsetWidth;
+                const containerHeight = container.offsetHeight;
+                
+                const x = containerWidth / 2 + pos.x * (containerWidth / 40);
+                const y = containerHeight / 2 + pos.y * (containerHeight / 40);
+                
+                p.element.style.left = `${x}px`;
+                p.element.style.top = `${y}px`;
+                
+                const size = isMobile ? 
+                    (3 + Math.sin(Date.now() * 0.005 + p.angle) * 1.5) :
+                    (4 + Math.sin(Date.now() * 0.005 + p.angle) * 2);
+                p.element.style.width = `${size}px`;
+                p.element.style.height = `${size}px`;
+                p.element.style.opacity = 0.6 + Math.sin(Date.now() * 0.003 + p.angle) * 0.4;
+            });
+            
+            requestAnimationFrame(updateHeart);
+        }
+        
+        // 移动端触摸事件处理
+        let touchStartY, touchStartX;
+        let isScrolling;
+        
+        function setupTouchEvents() {
+            const heartContainer = document.getElementById('heart-container');
+            
+            heartContainer.addEventListener('touchstart', function(e) {
+                touchStartY = e.touches[0].clientY;
+                touchStartX = e.touches[0].clientX;
+                isScrolling = undefined;
+                e.preventDefault();
+            }, { passive: false });
+            
+            heartContainer.addEventListener('touchmove', function(e) {
+                if (!isScrolling) {
+                    const touchY = e.touches[0].clientY;
+                    const touchX = e.touches[0].clientX;
+                    const dy = Math.abs(touchY - touchStartY);
+                    const dx = Math.abs(touchX - touchStartX);
+                    
+                    // 如果是垂直滚动，取消点击
+                    if (dy > 10 && dy > dx) {
+                        isScrolling = true;
+                    }
+                }
+            }, { passive: false });
+            
+            heartContainer.addEventListener('touchend', function(e) {
+                if (!isScrolling) {
+                    const touch = e.changedTouches[0];
+                    openCard({
+                        clientX: touch.clientX,
+                        clientY: touch.clientY
+                    });
+                }
+                e.preventDefault();
+            }, { passive: false });
+            
+            // 点击事件作为备用
+            heartContainer.addEventListener('click', function(e) {
+                openCard(e);
+            });
+        }
+        
+        // 改进的烟花效果 - 移动端优化
+        function createFirework(x, y) {
+            const firework = document.createElement('div');
+            firework.className = 'firework';
+            firework.style.left = `${x}px`;
+            firework.style.top = `${y}px`;
+            document.body.appendChild(firework);
+            
+            const particles = isMobile ? 40 : 60;
+            const colors = [
+                '#FF4D6D', '#FF758F', '#FF8FA3',
+                '#FFB3C6', '#FFCCD5', '#FFF0F3'
+            ];
+            
+            for (let i = 0; i < particles; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'firework-particle';
+                
+                const angle = (i / particles) * Math.PI * 2;
+                const distance = isMobile ? 60 + Math.random() * 30 : 80 + Math.random() * 40;
+                const tx = Math.cos(angle) * distance;
+                const ty = Math.sin(angle) * distance;
+                
+                particle.style.setProperty('--tx', `${tx}px`);
+                particle.style.setProperty('--ty', `${ty}px`);
+                particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                
+                const size = isMobile ? 1 + Math.random() * 2 : 2 + Math.random() * 4;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                
+                firework.appendChild(particle);
+            }
+            
+            setTimeout(() => {
+                if (firework.parentNode) {
+                    firework.remove();
+                }
+            }, 1000);
+        }
+        
+        // 随机创建烟花
+        function createRandomFirework() {
+            const x = Math.random() * window.innerWidth;
+            const y = Math.random() * window.innerHeight;
+            createFirework(x, y);
+        }
+        
+        // 创建闪烁星星
+        function createSparkles() {
+            const count = isMobile ? 15 : 20;
+            for (let i = 0; i < count; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle';
+                sparkle.style.left = `${Math.random() * 100}vw`;
+                sparkle.style.top = `${Math.random() * 100}vh`;
+                sparkle.style.animationDelay = `${Math.random() * 2}s`;
+                document.body.appendChild(sparkle);
+            }
+        }
+        
+        // 打开贺卡
+        function openCard(e) {
+            const card = document.getElementById('greetingCard');
+            const overlay = document.getElementById('overlay');
+            
+            // 创建烟花
+            createFirework(e.clientX, e.clientY);
+            
+            // 爱心粒子效果
+            particles.forEach(p => {
+                p.element.style.transform = 'scale(1.3)';
+                setTimeout(() => {
+                    p.element.style.transform = 'scale(1)';
+                }, 300);
+            });
+            
+            // 显示遮罩和贺卡
+            overlay.classList.add('show');
+            card.classList.add('show');
+            
+            // 防止背景滚动
+            document.body.style.overflow = 'hidden';
+        }
+        
+        // 关闭贺卡
+        function closeCard() {
+            const card = document.getElementById('greetingCard');
+            const overlay = document.getElementById('overlay');
+            
+            card.classList.remove('show');
+            setTimeout(() => {
+                overlay.classList.remove('show');
+            }, 300);
+            
+            // 恢复滚动
+            setTimeout(() => {
+                document.body.style.overflow = '';
+            }, 300);
+            
+            // 关闭时创建小烟花
+            for (let i = 0; i < 2; i++) {
+                setTimeout(() => {
+                    createFirework(
+                        window.innerWidth / 2 + (Math.random() - 0.5) * 150,
+                        window.innerHeight / 2 + (Math.random() - 0.5) * 150
+                    );
+                }, i * 100);
+            }
+        }
+        
+        // 点击遮罩层关闭贺卡
+        document.getElementById('overlay').addEventListener('click', closeCard);
+        
+        // 防止贺卡内容区域触发关闭
+        document.getElementById('greetingCard').addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+        
+        // 初始化
+        function init() {
+            createHeartParticles();
+            createSparkles();
+            setupTouchEvents();
+            updateHeart();
+            
+            // 随机烟花
+            const fireworkInterval = isMobile ? 2000 : 1500;
+            setInterval(createRandomFirework, fireworkInterval);
+            
+            // 初始烟花
+            setTimeout(() => {
+                for (let i = 0; i < 2; i++) {
+                    setTimeout(createRandomFirework, i * 300);
+                }
+            }, 1000);
+            
+            // 文字闪烁效果
+            const decorations = document.querySelectorAll('.decoration');
+            decorations.forEach((dec, index) => {
+                dec.style.animationDelay = `${index * 0.5}s`;
+            });
+        }
+        
+        // 页面加载完成后初始化
+        window.addEventListener('load', init);
+        
+        // 处理iPhone底部安全区域
+        function adjustForSafeArea() {
+            const bottomSafeArea = window.visualViewport ? 
+                window.visualViewport.height : window.innerHeight;
+            
+            if (window.innerHeight !== bottomSafeArea) {
+                document.body.style.paddingBottom = 'calc(env(safe-area-inset-bottom) + 20px)';
+            }
+        }
+        
+        // 监听窗口变化
+        window.addEventListener('resize', adjustForSafeArea);
+        window.addEventListener('orientationchange', function() {
+            setTimeout(adjustForSafeArea, 300);
+        });
+        
+        // 初始调整
+        adjustForSafeArea();
+    </script>
+</body>
+</html>
