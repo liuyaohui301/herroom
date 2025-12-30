@@ -27,7 +27,10 @@
             justify-content: center;
             align-items: center;
             min-height: -webkit-fill-available; /* 支持iPhone全面屏 */
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            background: #0f0c29; /* 备用纯色背景 */
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            background: -webkit-linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            background: -moz-linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
             font-family: 'Dancing Script', cursive;
             color: white;
             text-align: center;
@@ -35,7 +38,22 @@
                      env(safe-area-inset-bottom) env(safe-area-inset-left);
             touch-action: manipulation;
         }
-        
+
+        /* 添加背景容器确保渐变覆盖全屏 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: -1;
+            background: #0f0c29;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            background: -webkit-linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            background: -moz-linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+        }
+
         #heart-container {
             position: relative;
             width: 220px;
@@ -335,6 +353,24 @@
     </div>
 
     <script>
+	// 页面加载后强制设置背景色
+        document.addEventListener('DOMContentLoaded', function() {
+            // 强制设置body背景
+            document.body.style.backgroundColor = '#0f0c29';
+            
+            // 添加备用背景
+            const fallbackBg = document.createElement('div');
+            fallbackBg.style.position = 'fixed';
+            fallbackBg.style.top = '0';
+            fallbackBg.style.left = '0';
+            fallbackBg.style.right = '0';
+            fallbackBg.style.bottom = '0';
+            fallbackBg.style.zIndex = '-2';
+            fallbackBg.style.background = 'linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%)';
+            fallbackBg.style.background = '-webkit-linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%)';
+            document.body.appendChild(fallbackBg);
+        });
+
         // 移动端适配设置
         const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
         const particleCount = isMobile ? 120 : 200; // 移动端减少粒子数量
